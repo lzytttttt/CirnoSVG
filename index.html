@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cirno SVG — 冻结幻想 SVG</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Snowflake particles background -->
+    <div class="snowfall" id="snowfall" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <h1 class="logo">
+          <span class="logo-icon">❄️</span>
+          <span class="logo-text">Cirno SVG</span>
+          <span class="logo-sub">冻结幻想</span>
+        </h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon-dark">🌙</span>
+          <span class="theme-icon-light">☀️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Upload Section -->
+      <section id="upload-section" class="section upload-section">
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+                <!-- Cirno-style snowflake -->
+                <line x1="36" y1="4" x2="36" y2="68" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="4" y1="36" x2="68" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="13" y1="13" x2="59" y2="59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="59" y1="13" x2="13" y2="59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Snowflake branches -->
+                <line x1="36" y1="10" x2="30" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="36" y1="10" x2="42" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="36" y1="62" x2="30" y2="54" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="36" y1="62" x2="42" y2="54" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="10" y1="36" x2="18" y2="30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="10" y1="36" x2="18" y2="42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="62" y1="36" x2="54" y2="30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="62" y1="36" x2="54" y2="42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="36" cy="36" r="4" fill="currentColor" opacity="0.5"/>
+              </svg>
+            </div>
+            <p class="drop-text">把照片丢进冰冻射线里<span class="drop-link">点击选择</span></p>
+            <p class="drop-hint">支持 JPG、PNG、WebP — 琪露诺会冻住背景！</p>
+          </div>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+      </section>
+
+      <!-- Processing Section -->
+      <section id="processing-section" class="section processing-section hidden">
+        <div class="processing-card">
+          <div class="processing-spinner">
+            <div class="ice-crystal"></div>
+          </div>
+          <p id="processing-text" class="processing-text">正在冻结背景...</p>
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Result Section -->
+      <section id="result-section" class="section result-section hidden">
+        <div class="result-layout">
+          <!-- Left: Original -->
+          <div class="result-panel">
+            <h3 class="panel-title">原图</h3>
+            <div class="panel-image">
+              <canvas id="original-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Center: SVG Result -->
+          <div class="result-panel result-panel-main">
+            <h3 class="panel-title">❄️ SVG 插画</h3>
+            <div class="panel-image svg-container" id="svg-container">
+              <!-- SVG will be injected here -->
+            </div>
+            <!-- Animation Controls -->
+            <div class="animation-controls">
+              <button id="btn-replay" class="btn btn-icon" title="回放动画">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M3 10a7 7 0 0112.9-3.7M17 10a7 7 0 01-12.9 3.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M16 3v4h-4M4 17v-4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <label class="speed-control">
+                <span>速度</span>
+                <input type="range" id="anim-speed" min="0.5" max="4" step="0.5" value="1">
+              </label>
+            </div>
+          </div>
+
+          <!-- Right: No-bg -->
+          <div class="result-panel">
+            <h3 class="panel-title">冻结结果</h3>
+            <div class="panel-image">
+              <canvas id="nobg-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <div class="control-group">
+            <label class="control-label">简化程度</label>
+            <div class="slider-container">
+              <input type="range" id="simplify-slider" min="1" max="10" value="5" class="slider">
+              <div class="slider-labels">
+                <span>简洁</span>
+                <span>精细</span>
+              </div>
+            </div>
+          </div>
+          <div class="control-actions">
+            <button id="btn-download" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 3v9m0 0l-3-3m3 3l3-3M3 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              下载 SVG
+            </button>
+            <button id="btn-new" class="btn btn-secondary">
+              冻结新图片
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>❄️ Cirno SVG — 琪露诺的完美冻结 · 纯前端照片转 SVG 插画</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
