@@ -1,6 +1,6 @@
 {
   "name": "cirno-svg",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Photo to SVG illustration converter — Cirno's perfect freeze!",
   "type": "module",
   "scripts": {

@@ -108,10 +108,13 @@ async function handleFile(file) {
     // Step 3: Show result
     showProcessing('❄️ 冰冻成型...');
     const container = document.getElementById('svg-container');
-    container.innerHTML = svgString;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svgEl = doc.documentElement;
+    container.innerHTML = '';
+    container.appendChild(svgEl);
 
     // Step 4: Animate SVG
-    const svgEl = container.querySelector('svg');
     if (svgEl) {
       svgEl.style.width = '100%';
       svgEl.style.height = '100%';
@@ -131,7 +134,7 @@ async function handleFile(file) {
     console.error('Processing failed:', err);
     hideProcessing();
     document.getElementById('upload-section').classList.remove('hidden');
-    alert('处理失败: ' + err.message);
+    showProcessing('❌ 处理失败: ' + err.message);
   }
 }
 
@@ -140,7 +143,7 @@ function loadImage(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
+    img.onload = () => { if (src instanceof Blob) URL.revokeObjectURL(img.src); resolve(img); };
     img.onerror = reject;
     if (src instanceof Blob) {
       img.src = URL.createObjectURL(src);
